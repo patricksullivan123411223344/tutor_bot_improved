@@ -8,11 +8,11 @@ import os
 user_handler = UserProfile(None, None, None, None)
 tutor = Tutor("gemma3:1b")
 app = Flask(__name__, static_folder="static")
+appStart = True 
 
 @app.route("/")
 def index():
     return render_template("chatbox.html")
-
 if not os.path.exists("user_profiles/"):
     data = user_handler.first_contact()
     key = data.user_key
@@ -23,6 +23,13 @@ else:
     print(key)
     user_profile = loadSaveProfile.load_user_profile(key)
     print(user_profile)
+
+# need a way to get current objective 
+# appStart will be true on first run
+# we will get current objective if appStart == True
+# ask objective
+# appStart = False
+# return objective as type str
 
 @app.route("/chat", methods=["POST"])
 def chat():

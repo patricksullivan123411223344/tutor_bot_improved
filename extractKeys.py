@@ -1,12 +1,9 @@
 import json
 import os
 
-# create a user key based on the given name input from the UserProfilePayload
 def create_user_key(user_name: str) -> str:
     return user_name.lower().strip()
 
-# take the user key from the create_user_key function and save it into the user_keys directory inside of their own respective
-# file based upon their user key that was generated 
 def save_user_key(user_key: str) -> None:
     filepath = f"user_keys/{user_key}_key.json"
     data = {"user_key": user_key}
@@ -24,4 +21,3 @@ def get_user_key() -> str:
         key = json.load(f)
     
     return key["user_key"]
-

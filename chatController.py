@@ -50,5 +50,3 @@ def validate_response(reply: str, route: UserProfile) -> list[str]:
         failures.append("Assistant-like speech detected. None of that phrasing is allowed.")
     
     return failures
-    
-# Need a regenerate with feedback function

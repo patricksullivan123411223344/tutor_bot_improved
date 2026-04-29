@@ -17,7 +17,7 @@ class Tutor:
         Skill Level: {data.user_skill_level}
 
         Here is the current objective:
-
+        
         
         Here is the players last move:
 
@@ -36,6 +36,29 @@ class Tutor:
         Sound like a helpful tutor, not a form.
         """
     
+    def regenerate_with_feedback(self, user_message: str, data: UserProfile, original_reply: str, failures: list[str]) -> str:
+
+        messages = [
+            {"role": "system", "content": self.build_system_prompt(data)},
+            {"role": "user", "content": user_message},
+            {"role": "system", "content": original_reply},
+            {
+                "role": "user",
+                "message": (
+                    "Please revise your last answer to fix the following issues\n" +
+                    "\n".join(f"- {failures}" for failure in failures)
+                )
+            }
+        ]
+
+        reply = ollama.chat(
+            model = self.model,
+            messages=messages
+        )
+
+        return reply["message"]["content"].strip()
+        
+    
     def respond(self, user_message: str, data: UserProfile) -> str:
         message = [{"role": "system", "content": self.build_system_prompt(data)}]
         message.append({"role": "user", "content": user_message})
@@ -49,11 +72,13 @@ class Tutor:
         failures = chatController.validate_response(original_reply, data)
 
         if failures:
-            reply = chatController.regenerate_with_feedback(
+            return self.regenerate_with_feedback(
+                user_message,
+                data,
                 original_reply,
-                failures,
-                data
+                failures
             )
-            return reply
-        else:
-            return original_reply
+        
+        return original_reply
+
+

@@ -35,6 +35,11 @@ async function sendMessage() {
 
 sendBtn.addEventListener("click", sendMessage);
 
-userInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") sendMessage();
+// This does not work, <textarea> should automatically also add a newline. 
+// So do some due dilligence on <textarea>.
+userInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        userInput.value += "\n";
+    }
 });
