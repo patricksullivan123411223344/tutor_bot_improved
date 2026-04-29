@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from data import UserProfile
 from tutorEngine import Tutor
 import extractKeys
-import loadSave
+import loadSaveProfile
 import os
 
 user_handler = UserProfile(None, None, None, None)
@@ -16,11 +16,13 @@ def index():
 if not os.path.exists("user_profiles/"):
     data = user_handler.first_contact()
     key = data.user_key
-    loadSave.save_user_profile(data)
-    user_profile = loadSave.load_user_profile(key)    
+    loadSaveProfile.save_user_profile(data)
+    user_profile = loadSaveProfile.load_user_profile(key)    
 else:
     key = extractKeys.get_user_key()
-    user_profile = loadSave.load_user_profile(key)
+    print(key)
+    user_profile = loadSaveProfile.load_user_profile(key)
+    print(user_profile)
 
 @app.route("/chat", methods=["POST"])
 def chat():

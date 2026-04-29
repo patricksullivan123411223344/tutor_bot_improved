@@ -1,5 +1,6 @@
 import ollama 
-from data import UserProfile, SessionState
+import chatController 
+from data import UserProfile, SessionState, TutorPayload
 
 class Tutor:
     def __init__(self, model):
@@ -44,5 +45,15 @@ class Tutor:
             messages = message
         )
 
-        reply = response["message"]["content"].strip()
-        return reply
+        original_reply = response["message"]["content"].strip()
+        failures = chatController.validate_response(original_reply, data)
+
+        if failures:
+            reply = chatController.regenerate_with_feedback(
+                original_reply,
+                failures,
+                data
+            )
+            return reply
+        else:
+            return original_reply

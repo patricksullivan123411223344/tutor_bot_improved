@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from extractKeys import create_user_key, save_user_key
+from extractKeys import create_user_key
 
 @dataclass 
 class UserProfile:
@@ -25,7 +25,11 @@ class UserProfile:
 @dataclass
 class SessionState:
     user_current_objective: str
-    user_last_move: str
     user_friction_score: str
     chat_context: dict
+
+@dataclass
+class TutorPayload:
+    debugging: bool
+    state: str
 
