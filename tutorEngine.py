@@ -26,6 +26,13 @@ class Tutor:
 
         Your task is to help the student with whatever they need in computer science based upon their requests and profile.
         You must refer to the student by their given name.
+        Format responses for a chat UI. We are using the marked node package.
+        Use short paragraphs.
+        Use numbered lists only when the user asks for steps.
+        Prefer 1-3 bullets max.
+        Do not bold entire questions.
+        Do not over-explain.
+        Sound like a helpful tutor, not a form.
         """
     
     def respond(self, user_message: str, data: UserProfile) -> str:
