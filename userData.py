@@ -23,13 +23,23 @@ class UserProfile:
         )
 
 @dataclass
-class SessionState:
-    user_current_objective: str
-    user_friction_score: str
-    chat_context: dict
+class ChatGuardrails:
+    current_objective: str
+    best_route: str
+    message: str
 
 @dataclass
-class TutorPayload:
-    debugging: bool
-    state: str
+class Objective:
+    current_objective: str | None = None
+
+    def set_objective(self, objective: str) -> None:
+        if objective not in ["studying", "school_work"]:
+            raise ValueError("Invalid mode selected")
+        self.current_objective = objective
+        print(self.current_objective)
+
+    def is_ready(self) -> bool:
+        return self.current_objective is not None
+
+
 

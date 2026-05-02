@@ -1,52 +1,52 @@
 import ollama 
 import chatController 
-from data import UserProfile, SessionState, TutorPayload
+import behaviorController
+from userData import UserProfile, Objective, ChatGuardrails
 
 class Tutor:
     def __init__(self, model):
         self.model = model
+        self.fallback_reply = "I hit a response issue. Please try asking that one more time."
 
     @staticmethod
-    def build_system_prompt(data: UserProfile) -> str:
+    def build_system_prompt(data: UserProfile, guardrails: ChatGuardrails) -> str:
+        chat_handler = chatController.load_chat_memory(data.user_key)
+
         return f"""
         You are a helpful computer science tutor.
 
-        Here is your user information:
+        USER STATE:
         Name: {data.user_name}
         Age: {data.user_age}
         Skill Level: {data.user_skill_level}
+        Objective: {guardrails.current_objective}
 
-        Here is the current objective:
-        
-        
-        Here is the players last move:
+        ROUTING STATE:
+        Current route: {guardrails.best_route}
+        Guardrail: {guardrails.message}
 
+        IMPORTANT:
+        If the user asks about their name, skill level, objective, or current session state,
+        answer directly using USER STATE.
+        You MUST refer to the user by their name.
+        You MUST refer to the user's skill level.
+        This is a PRIVATE SESSION and the user is aware that you have their information. 
+        You are ALLOWED to refer to the user by their name, skill level, and objective.
 
-        And here is their friction level:
-
-
-        Your task is to help the student with whatever they need in computer science based upon their requests and profile.
-        You must refer to the student by their given name.
-        Format responses for a chat UI. We are using the marked node package.
-        Use short paragraphs.
-        Use numbered lists only when the user asks for steps.
-        Prefer 1-3 bullets max.
-        Do not bold entire questions.
-        Do not over-explain.
-        Sound like a helpful tutor, not a form.
+        Now respond directly to the user's latest message.
         """
     
-    def regenerate_with_feedback(self, user_message: str, data: UserProfile, original_reply: str, failures: list[str]) -> str:
+    def regenerate_with_feedback(self, user_message: str, data: UserProfile, original_reply: str, failures: list[str], guardrails: ChatGuardrails) -> str:
 
         messages = [
-            {"role": "system", "content": self.build_system_prompt(data)},
+            {"role": "system", "content": self.build_system_prompt(data, guardrails)},
             {"role": "user", "content": user_message},
-            {"role": "system", "content": original_reply},
+            {"role": "assistant", "content": original_reply},
             {
                 "role": "user",
-                "message": (
+                "content": (
                     "Please revise your last answer to fix the following issues\n" +
-                    "\n".join(f"- {failures}" for failure in failures)
+                    "\n".join(f"- {failure}" for failure in failures)
                 )
             }
         ]
@@ -56,11 +56,18 @@ class Tutor:
             messages=messages
         )
 
-        return reply["message"]["content"].strip()
+        regenerated_reply = reply["message"]["content"].strip()
+        return regenerated_reply if regenerated_reply else self.fallback_reply
         
     
-    def respond(self, user_message: str, data: UserProfile) -> str:
-        message = [{"role": "system", "content": self.build_system_prompt(data)}]
+    def respond(self, user_message: str, data: UserProfile, objective: Objective) -> str:
+        
+        message_scores = behaviorController.score_message(user_message)
+
+        if message_scores:
+            guardrails = behaviorController.delivery_handler(message_scores, objective)
+
+        message = [{"role": "system", "content": self.build_system_prompt(data, guardrails)}]
         message.append({"role": "user", "content": user_message})
 
         response = ollama.chat(
@@ -72,13 +79,15 @@ class Tutor:
         failures = chatController.validate_response(original_reply, data)
 
         if failures:
-            return self.regenerate_with_feedback(
+            regenerated_reply = self.regenerate_with_feedback(
                 user_message,
                 data,
                 original_reply,
-                failures
+                failures,
+                guardrails
             )
+            return regenerated_reply if regenerated_reply else self.fallback_reply
         
-        return original_reply
+        return original_reply if original_reply else self.fallback_reply
 
 
