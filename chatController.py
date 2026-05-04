@@ -10,7 +10,7 @@ user_controller = loadSaveProfile.load_user_profile(key)
 ## SAVE CHAT CONTEXT
 def save_chat_memory(user_message: str, response: str, user_key: str) -> None:
     """Update the chat loop short term memory in here. Contains up to the last 10 chats."""
-    filepath = f"/chat_memory/{user_key}_chat_context"
+    filepath = f"chat_memory/{user_key}_chat_context.json"
     if os.path.exists(filepath):
         with open(filepath, "r") as f:
             data = json.load(f)
@@ -24,11 +24,11 @@ def save_chat_memory(user_message: str, response: str, user_key: str) -> None:
 
     data = data[-10:]
     with open(filepath, "w") as f:
-        json.dump(data)
+        json.dump(data, f, indent=4)
 
 ## LOAD CHAT CONTEXT
 def load_chat_memory(user_key: str) -> dict:
-    filepath = f"stm/{user_key}_chat_context"
+    filepath = f"chat_memory/{user_key}_chat_context.json"
     try:
         with open(filepath, "r") as f:
             data = json.load(f)

@@ -10,7 +10,7 @@ class Tutor:
 
     @staticmethod
     def build_system_prompt(data: UserProfile, guardrails: ChatGuardrails) -> str:
-        chat_handler = chatController.load_chat_memory(data.user_key) # not yet implemented as we need to save initial chats beforehand
+        chat_handler = chatController.load_chat_memory(data.user_key)
 
         return f"""
         You are a helpful computer science tutor.
@@ -25,6 +25,9 @@ class Tutor:
         Current route: {guardrails.best_route}
         Guardrail: {guardrails.message}
 
+        CHAT CONTEXT:
+        {chat_handler}
+        
         IMPORTANT:
         If the user asks about their name, skill level, objective, or current session state,
         answer directly using USER STATE.

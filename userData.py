@@ -1,5 +1,14 @@
 from dataclasses import dataclass
 from extractKeys import create_user_key
+import time
+import sys
+
+def typing(msg: str, speed=0.05) -> str:
+    for char in msg:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        time.sleep(speed)
+    print() # new line when finished
 
 @dataclass 
 class UserProfile:
@@ -9,11 +18,14 @@ class UserProfile:
     user_skill_level: str
 
     def first_contact(self):
-        print("==== Let's get some info before we start ====\n")
+        typing("==== Let's get some info before we start ====\n")
+
         name = input("What's your name?: ")
         key = create_user_key(name)
         age = input("What's your age?: ")
         skill_level = input("What's your skill level?: ")
+
+        typing("==== Thank you! ====")
 
         return UserProfile(
             user_key=key,
@@ -33,7 +45,7 @@ class Objective:
     current_objective: str | None = None
 
     def set_objective(self, objective: str) -> None:
-        if objective not in ["studying", "school_work"]:
+        if objective not in ["studying", "school_work", "school work"]:
             raise ValueError("Invalid mode selected")
         self.current_objective = objective
         print(self.current_objective)
