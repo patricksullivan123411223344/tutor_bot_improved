@@ -24,7 +24,7 @@ def score_message(user_message: str) -> dict[str, int]:
     
     return scores
 
-def delivery_handler(scores: dict[str, int], objective: Objective) -> ChatGuardrails:
+def response_guardrails(scores: dict[str, int], objective: Objective) -> ChatGuardrails:
     objective = objective.current_objective.lower()
     best_route = max(scores, key=scores.get)
     best_score = scores[best_route]

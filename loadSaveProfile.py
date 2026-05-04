@@ -2,6 +2,11 @@ from userData import UserProfile
 import json
 import os 
 
+def user_profile_exists(key: str) -> bool:
+    """Check if a user profile exists."""
+    filepath = f"user_profiles/{key}_profile.json"
+    return os.path.exists(filepath)
+
 def save_user_profile(data: UserProfile) -> None:
     key = data.user_key
     # data to save

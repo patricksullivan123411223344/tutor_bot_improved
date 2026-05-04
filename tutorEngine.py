@@ -10,7 +10,7 @@ class Tutor:
 
     @staticmethod
     def build_system_prompt(data: UserProfile, guardrails: ChatGuardrails) -> str:
-        chat_handler = chatController.load_chat_memory(data.user_key) # not yet implemented as we need to save initial chats beforehand
+        chat_handler = chatController.load_chat_memory(data.user_key.strip())
 
         return f"""
         You are a helpful computer science tutor.
@@ -24,6 +24,9 @@ class Tutor:
         ROUTING STATE:
         Current route: {guardrails.best_route}
         Guardrail: {guardrails.message}
+
+        CHAT CONTEXT:
+        Last 20 chats: {chat_handler}
 
         IMPORTANT:
         If the user asks about their name, skill level, objective, or current session state,
@@ -65,7 +68,7 @@ class Tutor:
         message_scores = behaviorController.score_message(user_message)
 
         if message_scores:
-            guardrails = behaviorController.delivery_handler(message_scores, objective)
+            guardrails = behaviorController.response_guardrails(message_scores, objective)
 
         message = [{"role": "system", "content": self.build_system_prompt(data, guardrails)}]
         message.append({"role": "user", "content": user_message})

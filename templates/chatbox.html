@@ -8,23 +8,64 @@
         <meta name="description" content="LLM Tutor Bot For All Skill Levels and Ages">
     </head>
     <body>
-
-        <div class="title">
-            <h1 class="titleText">Welcome, Patrick</h1>
+        <!-- Onboarding Form (hidden by default) -->
+        <div id="onboardingContainer" class="onboarding-container" style="display: none;">
+            <div class="onboarding-form">
+                <h1>Welcome to Tutor Bot</h1>
+                <p>Let's get to know you first!</p>
+                
+                <form id="onboardingForm">
+                    <div class="form-group">
+                        <label for="nameInput">What's your name?</label>
+                        <input type="text" id="nameInput" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ageInput">How old are you?</label>
+                        <input type="number" id="ageInput" min="1" max="120" placeholder="Enter your age" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="skillInput">What's your skill level?</label>
+                        <select id="skillInput" required>
+                            <option value="">Select a level</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Start Learning</button>
+                </form>
+                
+                <div id="onboardingError" class="error-message" style="display: none;"></div>
+            </div>
         </div>
 
-        <div class="chatboxBlock">
-            <div class="chatHeader"><h3>Ask anything</h3></div>
-            <div class="chatBody" id="chatBody">
-                <div class="message_box">
-                    Hello! How can I help you?
+        <!-- Chat Interface (hidden by default) -->
+        <div id="chatContainer" class="chat-container" style="display: none;">
+            <div class="title">
+                <h1 class="titleText" id="welcomeTitle">Welcome</h1>
+            </div>
+
+            <div class="chatboxBlock">
+                <div class="chatHeader"><h3>Ask anything</h3></div>
+                <div class="chatBody" id="chatBody">
+                    <div id="msgBox" class="message_box">
+                    </div>
+                </div>
+                <div class="chatFooter">
+                    <input type="text" id="userInput" placeholder="Type a message...">
+                    <button id="sendChatBtn">Send</button>
                 </div>
             </div>
-            <div class="chatFooter">
-                <input type="text" id="userInput" placeholder="Type a message...">
-                <button id="sendChatBtn">Send</button>
-            </div>
         </div>
+
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" class="loading">
+            <p>Loading...</p>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script defer type="module" src="{{ url_for('static', filename='scripts.js') }}"></script>
     </body>
