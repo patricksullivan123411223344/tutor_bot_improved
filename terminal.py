@@ -61,5 +61,5 @@ if objective_handler.is_ready():
             chatController.save_chat_memory(user_message, response, user_profile.user_key)           
     except KeyboardInterrupt:
         chatController.save_chat_memory(user_message, response, user_profile.user_key)
-        typing("Tutor: Session saved, now exiting.")
+        typing("\nTutor: Session saved, now exiting.")
 
