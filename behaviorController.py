@@ -39,7 +39,7 @@ def delivery_handler(scores: dict[str, int], objective: Objective) -> ChatGuardr
     else:
         guardrails["best_route"] = best_route
 
-    if objective == "schoo_work":
+    if objective == "school_work":
         guardrails["message"] = "Do NOT give the answer away. The user is doing schoolwork."
     
     if objective == "studying":
